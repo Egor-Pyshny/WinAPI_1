@@ -28,7 +28,7 @@ int DELTA_X = 5;
 int DELTA_Y = 5;
 int mouseX;
 int mouseY;
-
+const UINT ELAPSED_TIME = 30;
 
 bool AddIconsToImageList(HINSTANCE hinst, HIMAGELIST list, int x, int y)
 { 
@@ -36,7 +36,7 @@ bool AddIconsToImageList(HINSTANCE hinst, HIMAGELIST list, int x, int y)
     picture_y = y;
     BITMAP bmp;
     HBITMAP hBitmap = (HBITMAP)LoadImageW(NULL, 
-        L"C:\\Users\\Пользователь\\Downloads\\dvd.bmp", 
+        L"C:\\Users\\User\\Downloads\\dvd.bmp", 
         IMAGE_BITMAP, x, y, LR_LOADFROMFILE);
     GetObject(hBitmap, sizeof(BITMAP), &bmp);
     PICTURE_WIDTH = bmp.bmWidth;
@@ -74,7 +74,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     }
     ShowWindow(hwnd, nCmdShow);
     MSG msg = { };
-    while (GetMessage(&msg, NULL, 0, 0) > 0)
+    while (GetMessageW(&msg, NULL, 0, 0) > 0)
     {
         if (!TranslateAccelerator(hwnd, hAccel, &msg))
         {
@@ -158,6 +158,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_DESTROY:
         PostQuitMessage(0);
+        KillTimer(hwnd, 1);
+        KillTimer(hwnd, 1);
         return 0;
 
     case WM_CREATE:
@@ -214,6 +216,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         break;
     }
+    case WM_TOUCH:
+    {
+        int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+        break;
+    }
     case WM_KEYDOWN:
     {
         if (isMoving == false) {
@@ -262,11 +269,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case ID_MOVING:
         {
             if (isMoving) {
-                KillTimer(hwnd,1);
+                KillTimer(hwnd, 1);
                 isMoving = false;
             }
             else {
-                SetTimer(hwnd, 1, 100, NULL);
+                SetTimer(hwnd, 1, ELAPSED_TIME, NULL);
                 isMoving = true;
             }
             break;
